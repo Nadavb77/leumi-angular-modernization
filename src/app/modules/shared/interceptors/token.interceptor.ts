@@ -1,6 +1,6 @@
 import { Observable, ObservableInput, switchMap, throwError as observableThrowError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Inject } from '@angular/core';
+import { Inject, DOCUMENT } from '@angular/core';
 import {
   HttpEvent,
   HttpHandler,
@@ -14,7 +14,7 @@ import jwt_decode from 'jwt-decode';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { Router } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
+
 import { AlertId } from '~modules/shared/services/alert.service';
 
 export class TokenInterceptor implements HttpInterceptor {

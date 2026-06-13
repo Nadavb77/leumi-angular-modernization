@@ -8,18 +8,19 @@ import {
   OnDestroy,
   OnInit,
   TrackByFunction,
+  DOCUMENT,
 } from '@angular/core';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { DOCUMENT, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { AppConfig } from '../../../../configs/app.config';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { RouterLink } from '@angular/router';
 import { HeroOrderField, HeroService, OrderDirection } from '~modules/hero/shared/hero.service';
 import { Hero } from '~modules/hero/shared/hero.model';
 import { TrackByService } from '~modules/shared/services/track-by.service';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { ApiError } from '~modules/shared/interfaces/api-error.interface';
 import { CustomError } from '~modules/auth/shared/interfaces/custom-errors.enum';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
@@ -108,10 +109,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         next: () => {
           this.loadPublicHeroes();
         },
-        error: (error: ApolloError) => {
+        error: (error: unknown) => {
           const networkError = this.utilService.checkNetworkError(error);
           if (!networkError) {
-            const voteForHeroErrors = error.graphQLErrors;
+            const voteForHeroErrors = (error as CombinedGraphQLErrors).errors;
             if (voteForHeroErrors.length) {
               for (const voteForHeroError of voteForHeroErrors) {
                 const apiError = voteForHeroError as unknown as ApiError;

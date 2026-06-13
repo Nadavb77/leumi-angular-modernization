@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { Apollo } from 'apollo-angular';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -137,7 +138,7 @@ export class AuthService {
       .mutate({
         mutation: refreshTokenMutation,
         context: {
-          headers: { [AppConfig.bypassAuthorization]: 'true' },
+          headers: new HttpHeaders({ [AppConfig.bypassAuthorization]: 'true' }),
         },
         variables: {
           refreshToken,

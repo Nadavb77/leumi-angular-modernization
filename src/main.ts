@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
+import { enableProdMode, importProvidersFrom, LOCALE_ID, DOCUMENT } from '@angular/core';
 import { environment } from '~environments/environment';
 import { enableElfProdMode } from '@ngneat/elf';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -8,15 +8,15 @@ import { provideRouter, Router } from '@angular/router';
 import { appPaths } from './app/app-routes';
 import { authPaths, authRoutes } from '~modules/auth/shared/auth-routes';
 import { Error404PageComponent } from '~modules/shared/pages/error404-page/error404-page.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { userPaths } from '~modules/user/shared/user-routes';
 import { TokenInterceptor } from '~modules/shared/interceptors/token.interceptor';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT } from '@angular/common';
+
 import { Apollo, APOLLO_OPTIONS } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
-import { ApolloClientOptions, ApolloLink, InMemoryCache } from '@apollo/client/core';
+import { ApolloClient, ApolloLink, InMemoryCache } from '@apollo/client/core';
 import { setContext } from '@apollo/client/link/context';
 
 if (environment.production) {
@@ -53,16 +53,10 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: APOLLO_OPTIONS,
-      useFactory: (
-        httpLink: HttpLink,
-        authRepository: AuthRepository
-      ): ApolloClientOptions<unknown> => ({
+      useFactory: (httpLink: HttpLink, authRepository: AuthRepository): ApolloClient.Options => ({
         link: ApolloLink.from([
-          setContext((operation, prevContext) => ({
-            headers: {
-              ...prevContext['headers'],
-              'Accept-Language': authRepository.locale,
-            },
+          setContext(() => ({
+            headers: new HttpHeaders({ 'Accept-Language': authRepository.locale }),
           })),
           httpLink.create({ uri: environment.graphqlHost + AppConfig.endpoints.graphql }),
         ]),

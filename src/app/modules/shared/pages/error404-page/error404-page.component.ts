@@ -7,10 +7,11 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
+  DOCUMENT,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT } from '@angular/common';
+
 import { AppConfig } from '../../../../configs/app.config';
 
 @Component({

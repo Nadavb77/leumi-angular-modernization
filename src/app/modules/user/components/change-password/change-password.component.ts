@@ -20,7 +20,7 @@ import { FormErrorsComponent } from '~modules/shared/components/form-errors/form
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
 import { NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
@@ -87,7 +87,7 @@ export class ChangePasswordComponent implements OnDestroy {
           next: () => {
             this.handleChangePasswordResponse();
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleChangePasswordError(error);
           },
         });
@@ -101,10 +101,10 @@ export class ChangePasswordComponent implements OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  handleChangePasswordError(error: ApolloError) {
+  handleChangePasswordError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const changePasswordErrors = error.graphQLErrors;
+      const changePasswordErrors = (error as CombinedGraphQLErrors).errors;
       if (changePasswordErrors.length) {
         for (const changePasswordError of changePasswordErrors) {
           const apiError = changePasswordError as unknown as ApiError;

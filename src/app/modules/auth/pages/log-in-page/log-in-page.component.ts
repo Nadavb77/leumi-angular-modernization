@@ -6,6 +6,7 @@ import {
   Inject,
   OnDestroy,
   Renderer2,
+  DOCUMENT,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,7 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '~modules/auth/shared/auth.service';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Subject, takeUntil } from 'rxjs';
 import { APP_CONFIG, AppConfig } from '../../../../configs/app.config';
 import { UtilService } from '~modules/shared/services/util.service';
@@ -29,7 +30,7 @@ import { AuthUserData } from '~modules/auth/shared/interfaces/register-data.inte
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { EventBCType, EventBusService } from '~modules/shared/services/event-bus.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LanguageSelectorComponent } from '~modules/auth/shared/components/language-selector/language-selector.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
@@ -107,7 +108,7 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
           next: (response: unknown) => {
             this.handleLogInResponse(response);
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleLogInError(error);
           },
         });
@@ -135,10 +136,10 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
     return this.changeDetectorRef.detectChanges();
   }
 
-  handleLogInError(error: ApolloError) {
+  handleLogInError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const loginErrors = error.graphQLErrors;
+      const loginErrors = (error as CombinedGraphQLErrors).errors;
       if (loginErrors.length) {
         for (const loginError of loginErrors) {
           const apiError = loginError as unknown as ApiError;

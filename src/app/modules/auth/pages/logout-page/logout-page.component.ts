@@ -5,13 +5,14 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  DOCUMENT,
 } from '@angular/core';
 import { EventBusService, EventBusType } from '~modules/shared/services/event-bus.service';
 import { AppConfig } from '../../../../configs/app.config';
 import { AlertService } from '~modules/shared/services/alert.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT } from '@angular/common';
+
 import { environment } from '~environments/environment';
 import { ActivatedRoute } from '@angular/router';
 import { authRoutes } from '~modules/auth/shared/auth-routes';

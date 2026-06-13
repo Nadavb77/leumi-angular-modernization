@@ -7,6 +7,7 @@ import {
   Input,
   OnDestroy,
   ViewChild,
+  DOCUMENT,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -19,9 +20,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
@@ -103,7 +104,7 @@ export class DeleteAccountComponent implements OnDestroy {
           next: () => {
             this.handleDeleteAccountResponse();
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleDeleteAccountError(error);
           },
         });
@@ -117,10 +118,10 @@ export class DeleteAccountComponent implements OnDestroy {
     });
   }
 
-  handleDeleteAccountError(error: ApolloError) {
+  handleDeleteAccountError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const deleteAccountErrors = error.graphQLErrors;
+      const deleteAccountErrors = (error as CombinedGraphQLErrors).errors;
       if (deleteAccountErrors.length) {
         for (const deleteAccountError of deleteAccountErrors) {
           const apiError = deleteAccountError as unknown as ApiError;

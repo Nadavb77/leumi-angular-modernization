@@ -19,7 +19,7 @@ import { FormErrorsComponent } from '~modules/shared/components/form-errors/form
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
 import { NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
@@ -81,7 +81,7 @@ export class EditProfileComponent implements OnInit, OnDestroy {
           next: () => {
             this.handleUpdateUserResponse();
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleUpdateUserError(error);
           },
         });
@@ -94,10 +94,10 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  handleUpdateUserError(error: ApolloError) {
+  handleUpdateUserError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const registerErrors = error.graphQLErrors;
+      const registerErrors = (error as CombinedGraphQLErrors).errors;
       if (registerErrors.length) {
         this.alertService.create(AlertId.UPDATE_USER_ERROR);
       }

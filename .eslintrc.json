@@ -134,6 +134,7 @@
         "@angular-eslint/use-component-selector": "error",
         "@angular-eslint/use-component-view-encapsulation": "error",
         "@angular-eslint/use-pipe-transform-interface": "error",
+        "@angular-eslint/prefer-inject": "off",
         "@angular-eslint/component-class-suffix": "error",
         "@angular-eslint/directive-class-suffix": "error",
         "@angular-eslint/no-inputs-metadata-property": "error",

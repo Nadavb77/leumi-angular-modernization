@@ -8,11 +8,12 @@ import {
   OnDestroy,
   OnInit,
   TrackByFunction,
+  DOCUMENT,
 } from '@angular/core';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { DOCUMENT, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HeroService } from '~modules/hero/shared/hero.service';
 import { Hero } from '~modules/hero/shared/hero.model';
