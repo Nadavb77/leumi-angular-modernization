@@ -13,7 +13,7 @@ import {
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HeroService } from '~modules/hero/shared/hero.service';
 import { Hero } from '~modules/hero/shared/hero.model';
@@ -29,7 +29,7 @@ import { HeroModalComponent } from '~modules/user/components/hero-modal/hero-mod
   templateUrl: './my-heroes-page.component.html',
   styleUrls: ['./my-heroes-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, RouterLink, NgForOf, NgOptimizedImage, HeroModalComponent],
+  imports: [RouterLink, NgOptimizedImage, HeroModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class MyHeroesPageComponent implements OnInit, OnDestroy {

@@ -6,9 +6,8 @@
         This heroes are available to all the users and you can vote for them!
       </p>
       <div class="row">
-        <div
-          *ngFor="let hero of publicHeroes; let i = index; trackBy: trackHero"
-          class="col-12 col-sm-6 col-lg-4">
+        @for (hero of publicHeroes; track hero.id) {
+        <div class="col-12 col-sm-6 col-lg-4">
           <div class="card mb-3">
             <img
               [ngSrc]="hero.image"
@@ -29,6 +28,7 @@
             </div>
           </div>
         </div>
+        }
       </div>
     </div>
   </div>

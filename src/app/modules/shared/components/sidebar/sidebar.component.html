@@ -29,8 +29,9 @@
     </ul>
   </div>
 </nav>
+@if (showEmptySpace) {
 <div
   (click)="closeSidebar()"
   (keyup.enter)="closeSidebar()"
-  *ngIf="showEmptySpace"
   class="sidebar-empty-space col-3 d-sm-none"></div>
+}

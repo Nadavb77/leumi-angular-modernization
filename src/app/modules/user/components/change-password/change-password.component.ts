@@ -18,7 +18,7 @@ import {
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
-import { NgIf } from '@angular/common';
+
 import { Subject, takeUntil } from 'rxjs';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
@@ -32,7 +32,7 @@ import { CustomError } from '~modules/auth/shared/interfaces/custom-errors.enum'
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
+  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective],
 })
 export class ChangePasswordComponent implements OnDestroy {
   @ViewChild('btnReset') btnReset: ElementRef<HTMLElement> | undefined;

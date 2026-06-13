@@ -20,7 +20,7 @@ import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { User } from '~modules/user/shared/user.model';
 import { translations } from '../locale/translations';
 import { AppConfig } from './configs/app.config';
-import { NgIf } from '@angular/common';
+
 import { ActivatedRoute, Event, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { Title } from '@angular/platform-browser';
@@ -38,7 +38,7 @@ import { AlertComponent } from '~modules/shared/components/alert/alert.component
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, NgIf, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
 })
 export class AppComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 import { EventBusService, EventBusType } from '~modules/shared/services/event-bus.service';
-import { NgIf } from '@angular/common';
+
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { User } from '~modules/user/shared/user.model';
@@ -20,7 +20,7 @@ import { User } from '~modules/user/shared/user.model';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, NgIf],
+  imports: [RouterModule],
 })
 export class SidebarComponent implements OnInit, OnDestroy {
   @Input() user: User | undefined;

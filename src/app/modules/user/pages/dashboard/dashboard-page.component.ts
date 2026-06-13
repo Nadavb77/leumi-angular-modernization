@@ -13,7 +13,7 @@ import {
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { NgOptimizedImage } from '@angular/common';
 import { AppConfig } from '../../../../configs/app.config';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { RouterLink } from '@angular/router';
@@ -33,7 +33,7 @@ import { HeroModalComponent } from '~modules/user/components/hero-modal/hero-mod
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, RouterLink, NgForOf, NgOptimizedImage, HeroModalComponent],
+  imports: [RouterLink, NgOptimizedImage, HeroModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DashboardPageComponent implements OnInit, OnDestroy {

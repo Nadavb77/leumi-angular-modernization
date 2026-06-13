@@ -14,7 +14,7 @@ import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { NgIf } from '@angular/common';
+
 import { User } from '~modules/user/shared/user.model';
 import { environment } from '~environments/environment';
 import { AppConfig } from '../../../../configs/app.config';
@@ -24,7 +24,7 @@ import { userRoutes } from '~modules/user/shared/user-routes';
   selector: 'app-change-language',
   templateUrl: './change-language.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
 })
 export class ChangeLanguageComponent implements OnInit, OnDestroy {
   @Input() user: User | undefined;

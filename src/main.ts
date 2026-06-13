@@ -1,4 +1,10 @@
-import { enableProdMode, importProvidersFrom, LOCALE_ID, DOCUMENT } from '@angular/core';
+import {
+  enableProdMode,
+  importProvidersFrom,
+  LOCALE_ID,
+  DOCUMENT,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { environment } from '~environments/environment';
 import { enableElfProdMode } from '@ngneat/elf';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -26,6 +32,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideZoneChangeDetection(),
     importProvidersFrom(HttpClientModule),
     provideRouter([
       {

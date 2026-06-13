@@ -17,7 +17,7 @@ import { User } from '~modules/user/shared/user.model';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
-import { NgIf } from '@angular/common';
+
 import { Subject, takeUntil } from 'rxjs';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
@@ -28,7 +28,7 @@ import { UtilService } from '~modules/shared/services/util.service';
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
+  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective],
 })
 export class EditProfileComponent implements OnInit, OnDestroy {
   @Input() user: User | undefined;

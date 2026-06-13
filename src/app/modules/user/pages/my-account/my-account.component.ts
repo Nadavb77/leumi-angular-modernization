@@ -9,7 +9,7 @@ import {
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { NgIf, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { APP_CONFIG } from '../../../../configs/app.config';
 import { IAppConfig } from '../../../../configs/app-config.interface';
 import { EditProfileComponent } from '~modules/user/components/edit-profile/edit-profile.component';
@@ -23,7 +23,6 @@ import { DeleteAccountComponent } from '~modules/user/components/delete-account/
   styleUrls: ['./my-account.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    NgIf,
     UpperCasePipe,
     EditProfileComponent,
     ChangePasswordComponent,

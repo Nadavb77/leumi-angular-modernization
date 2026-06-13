@@ -30,7 +30,7 @@ import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { EventBCType, EventBusService } from '~modules/shared/services/event-bus.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { NgIf } from '@angular/common';
+
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LanguageSelectorComponent } from '~modules/auth/shared/components/language-selector/language-selector.component';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
@@ -49,7 +49,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
     LanguageSelectorComponent,
     TrimDirective,
     LowercaseDirective,
-    NgIf,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

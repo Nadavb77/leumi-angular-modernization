@@ -20,7 +20,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
-import { NgIf } from '@angular/common';
+
 import { Subject, takeUntil } from 'rxjs';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
@@ -38,7 +38,7 @@ import { TrimDirective } from '~modules/shared/directives/trim.directive';
   selector: 'app-delete-account',
   templateUrl: './delete-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, FormErrorsComponent, NgIf, FormsModule, TrimDirective],
+  imports: [ReactiveFormsModule, FormErrorsComponent, FormsModule, TrimDirective],
 })
 export class DeleteAccountComponent implements OnDestroy {
   @Input() user: User | undefined;

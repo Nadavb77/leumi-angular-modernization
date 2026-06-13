@@ -1,14 +1,15 @@
 <div class="pt-2 pt-lg-3 px-0 px-lg-3">
   <h3 class="mb-2"><ng-container i18n>Personal data</ng-container></h3>
+  @if (profileForm) {
   <form
     #profileFormRef="ngForm"
     (ngSubmit)="sendForm()"
-    *ngIf="profileForm"
     [class.needs-validation]="!profileFormRef.submitted"
     [class.was-validated]="profileFormRef.submitted"
     [formGroup]="profileForm">
     <div class="col-12 col-lg-6 col-xl-5 col-xxl-4">
-      <div *ngIf="firstname" class="form-floating mb-3">
+      @if (firstname) {
+      <div class="form-floating mb-3">
         <input
           [formControl]="firstname"
           class="form-control"
@@ -27,9 +28,11 @@
           [formRef]="profileFormRef"
           class="invalid-feedback"></app-form-errors>
       </div>
+      }
     </div>
     <div class="col-12 col-lg-6 col-xl-5 col-xxl-4">
-      <div *ngIf="email" class="form-floating mb-3">
+      @if (email) {
+      <div class="form-floating mb-3">
         <input
           [formControl]="email"
           class="form-control cursor-not-allowed"
@@ -48,6 +51,7 @@
           [formRef]="profileFormRef"
           class="invalid-feedback"></app-form-errors>
       </div>
+      }
     </div>
     <div class="col-12 col-lg-6 col-xl-5 col-xxl-4 text-center mb-4">
       <button
@@ -55,14 +59,15 @@
         [disabled]="isButtonProfileLoading"
         class="btn btn-primary"
         type="submit">
-        <ng-container *ngIf="isButtonProfileLoading">
-          <span
-            aria-hidden="true"
-            class="spinner-border text-white spinner-border-sm me-1"
-            role="status"></span>
-        </ng-container>
+        @if (isButtonProfileLoading) {
+        <span
+          aria-hidden="true"
+          class="spinner-border text-white spinner-border-sm me-1"
+          role="status"></span>
+        }
         <ng-container i18n>Save</ng-container>
       </button>
     </div>
   </form>
+  }
 </div>

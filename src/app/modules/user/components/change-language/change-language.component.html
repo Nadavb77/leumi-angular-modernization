@@ -1,8 +1,8 @@
 <div class="pt-2 pt-lg-3 px-0 px-lg-3">
   <h3 class="mb-2"><ng-container i18n>Select your language</ng-container></h3>
+  @if (selectLanguageForm) {
   <form
     #selectLanguageFormRef="ngForm"
-    *ngIf="selectLanguageForm"
     [class.needs-validation]="!selectLanguageFormRef.submitted"
     [class.was-validated]="selectLanguageFormRef.submitted"
     [formGroup]="selectLanguageForm">
@@ -30,4 +30,5 @@
       </div>
     </div>
   </form>
+  }
 </div>
