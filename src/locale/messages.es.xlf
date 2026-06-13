@@ -281,6 +281,10 @@
         <source>Hero deleted!</source>
         <target state="new">Hero deleted!</target>
       </trans-unit>
+      <trans-unit id="7822748941834007534" datatype="html">
+        <source>My heroes</source>
+        <target state="new">My heroes</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
