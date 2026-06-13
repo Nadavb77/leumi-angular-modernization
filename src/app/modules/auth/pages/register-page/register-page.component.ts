@@ -41,7 +41,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RouterLink,
     FormErrorsComponent,

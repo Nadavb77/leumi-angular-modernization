@@ -28,7 +28,6 @@ import { Modal } from 'bootstrap';
   templateUrl: './hero-modal.component.html',
   styleUrls: ['./hero-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, FormErrorsComponent, ReactiveFormsModule, NgClass, NgForOf],
 })
 export class HeroModalComponent implements OnChanges, OnDestroy {

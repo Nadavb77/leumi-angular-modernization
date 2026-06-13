@@ -26,7 +26,6 @@ import { TrackByService } from '~modules/shared/services/track-by.service';
   selector: 'app-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
 })

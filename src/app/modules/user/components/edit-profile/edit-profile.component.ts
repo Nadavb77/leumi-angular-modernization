@@ -28,7 +28,6 @@ import { UtilService } from '~modules/shared/services/util.service';
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
 })
 export class EditProfileComponent implements OnInit, OnDestroy {

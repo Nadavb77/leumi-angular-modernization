@@ -11,7 +11,6 @@ import { FormControl, FormGroupDirective } from '@angular/forms';
 @Component({
   selector: 'app-form-errors',
   templateUrl: './form-errors.component.html',
-  standalone: true,
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

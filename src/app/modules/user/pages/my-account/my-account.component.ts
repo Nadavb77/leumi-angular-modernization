@@ -15,7 +15,6 @@ import { DeleteAccountComponent } from '~modules/user/components/delete-account/
   templateUrl: './my-account.component.html',
   styleUrls: ['./my-account.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgIf,
     UpperCasePipe,

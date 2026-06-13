@@ -32,7 +32,6 @@ import { HeroModalComponent } from '~modules/user/components/hero-modal/hero-mod
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, RouterLink, NgForOf, NgOptimizedImage, HeroModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

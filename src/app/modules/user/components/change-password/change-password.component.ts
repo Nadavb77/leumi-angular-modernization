@@ -32,7 +32,6 @@ import { CustomError } from '~modules/auth/shared/interfaces/custom-errors.enum'
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
 })
 export class ChangePasswordComponent implements OnDestroy {

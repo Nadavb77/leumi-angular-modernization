@@ -37,7 +37,6 @@ import { TrimDirective } from '~modules/shared/directives/trim.directive';
   selector: 'app-delete-account',
   templateUrl: './delete-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, FormErrorsComponent, NgIf, FormsModule, TrimDirective],
 })
 export class DeleteAccountComponent implements OnDestroy {

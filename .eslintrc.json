@@ -136,7 +136,6 @@
         "@angular-eslint/use-pipe-transform-interface": "error",
         "@angular-eslint/component-class-suffix": "error",
         "@angular-eslint/directive-class-suffix": "error",
-        "@angular-eslint/no-host-metadata-property": "error",
         "@angular-eslint/no-inputs-metadata-property": "error",
         "@angular-eslint/no-outputs-metadata-property": "error",
         "@angular-eslint/no-queries-metadata-property": "error",

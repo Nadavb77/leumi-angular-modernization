@@ -38,7 +38,6 @@ import { AlertComponent } from '~modules/shared/components/alert/alert.component
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, NgIf, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
-  standalone: true,
 })
 export class AppComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();

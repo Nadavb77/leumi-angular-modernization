@@ -18,7 +18,6 @@ import { User } from '~modules/user/shared/user.model';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule, NgIf],
 })

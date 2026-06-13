@@ -42,7 +42,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
   templateUrl: './log-in-page.component.html',
   styleUrls: ['./log-in-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     HttpClientModule,
     RouterLink,

@@ -23,7 +23,6 @@ import { appRoutes } from '../../../../app-routes';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, AlertComponent, RouterModule],
 })

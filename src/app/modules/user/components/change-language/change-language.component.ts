@@ -23,7 +23,6 @@ import { userRoutes } from '~modules/user/shared/user-routes';
   selector: 'app-change-language',
   templateUrl: './change-language.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [ReactiveFormsModule, NgIf],
 })
 export class ChangeLanguageComponent implements OnInit, OnDestroy {
