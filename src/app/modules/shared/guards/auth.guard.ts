@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { appRoutes } from '../../../app-routes';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard {
   constructor(private authRepository: AuthRepository, private router: Router) {}
 
   canActivate(): Promise<boolean> {
