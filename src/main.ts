@@ -60,7 +60,7 @@ bootstrapApplication(AppComponent, {
         link: ApolloLink.from([
           setContext((operation, prevContext) => ({
             headers: {
-              ...prevContext.headers,
+              ...prevContext['headers'],
               'Accept-Language': authRepository.locale,
             },
           })),
