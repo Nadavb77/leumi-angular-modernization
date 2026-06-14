@@ -14,7 +14,7 @@ import { provideRouter, Router } from '@angular/router';
 import { appPaths } from './app/app-routes';
 import { authPaths, authRoutes } from '~modules/auth/shared/auth-routes';
 import { Error404PageComponent } from '~modules/shared/pages/error404-page/error404-page.component';
-import { HTTP_INTERCEPTORS, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { userPaths } from '~modules/user/shared/user-routes';
 import { TokenInterceptor } from '~modules/shared/interceptors/token.interceptor';
 import { AuthService } from '~modules/auth/shared/auth.service';
@@ -62,8 +62,11 @@ bootstrapApplication(AppComponent, {
       provide: APOLLO_OPTIONS,
       useFactory: (httpLink: HttpLink, authRepository: AuthRepository): ApolloClient.Options => ({
         link: ApolloLink.from([
-          setContext(() => ({
-            headers: new HttpHeaders({ 'Accept-Language': authRepository.locale }),
+          setContext((_operation, prevContext) => ({
+            headers: {
+              ...(prevContext['headers'] as Record<string, string>),
+              'Accept-Language': authRepository.locale,
+            },
           })),
           httpLink.create({ uri: environment.graphqlHost + AppConfig.endpoints.graphql }),
         ]),
