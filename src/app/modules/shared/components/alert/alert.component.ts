@@ -6,7 +6,7 @@ import {
   OnInit,
   TrackByFunction,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   Alert,
   AlertData,
@@ -26,9 +26,8 @@ import { TrackByService } from '~modules/shared/services/track-by.service';
   selector: 'app-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [],
 })
 export class AlertComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();

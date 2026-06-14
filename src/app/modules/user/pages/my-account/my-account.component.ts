@@ -1,8 +1,15 @@
-import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  DOCUMENT,
+} from '@angular/core';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { DOCUMENT, NgIf, UpperCasePipe } from '@angular/common';
+import { UpperCasePipe } from '@angular/common';
 import { APP_CONFIG } from '../../../../configs/app.config';
 import { IAppConfig } from '../../../../configs/app-config.interface';
 import { EditProfileComponent } from '~modules/user/components/edit-profile/edit-profile.component';
@@ -15,9 +22,7 @@ import { DeleteAccountComponent } from '~modules/user/components/delete-account/
   templateUrl: './my-account.component.html',
   styleUrls: ['./my-account.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    NgIf,
     UpperCasePipe,
     EditProfileComponent,
     ChangePasswordComponent,

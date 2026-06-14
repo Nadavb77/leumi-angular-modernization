@@ -44,29 +44,35 @@
                   class="nav-link dropdown-toggle hide-arrow"
                   data-bs-toggle="dropdown"
                   i18n-aria-label>
-                  <div *ngIf="user" class="avatar cursor-pointer">
+                  @if (user) {
+                  <div class="avatar cursor-pointer">
                     <img
                       alt="user avatar"
                       class="w-px-40 h-auto main-avatar-circle rounded-circle"
                       referrerpolicy="no-referrer"
                       src="/assets/images/user.png" />
                   </div>
+                  }
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                   <li>
                     <div class="dropdown-item no-hover">
                       <div class="d-flex align-items-center">
                         <div class="flex-shrink-0 me-3">
-                          <div *ngIf="user" class="avatar">
+                          @if (user) {
+                          <div class="avatar">
                             <img
                               alt="user avatar"
                               class="w-px-40 h-auto rounded-circle"
                               referrerpolicy="no-referrer"
                               src="/assets/images/user.png" />
                           </div>
+                          }
                         </div>
                         <div class="flex-grow-1">
-                          <span *ngIf="user" class="d-block">{{ user.firstname }}</span>
+                          @if (user) {
+                          <span class="d-block">{{ user.firstname }}</span>
+                          }
                           <small class="text-muted" i18n>Free plan</small>
                         </div>
                       </div>

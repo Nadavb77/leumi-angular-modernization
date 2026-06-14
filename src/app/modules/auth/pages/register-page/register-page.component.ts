@@ -6,6 +6,7 @@ import {
   Inject,
   OnDestroy,
   Renderer2,
+  DOCUMENT,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -15,7 +16,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AuthService } from '~modules/auth/shared/auth.service';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Subject, takeUntil } from 'rxjs';
 import { APP_CONFIG } from '../../../../configs/app.config';
 import { UtilService } from '~modules/shared/services/util.service';
@@ -29,7 +30,7 @@ import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { EventBCType, EventBusService } from '~modules/shared/services/event-bus.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LanguageSelectorComponent } from '~modules/auth/shared/components/language-selector/language-selector.component';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
@@ -41,7 +42,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RouterLink,
     FormErrorsComponent,
@@ -49,7 +49,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
     LanguageSelectorComponent,
     TrimDirective,
     LowercaseDirective,
-    NgIf,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -127,7 +126,7 @@ export class RegisterPageComponent implements OnDestroy {
           next: (response: unknown) => {
             this.handleRegisterResponse(response);
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleRegisterError(error);
           },
         });
@@ -149,10 +148,10 @@ export class RegisterPageComponent implements OnDestroy {
     return this.changeDetectorRef.detectChanges();
   }
 
-  handleRegisterError(error: ApolloError) {
+  handleRegisterError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const registerErrors = error.graphQLErrors;
+      const registerErrors = (error as CombinedGraphQLErrors).errors;
       if (registerErrors.length) {
         for (const registerError of registerErrors) {
           const apiError = registerError as unknown as ApiError;

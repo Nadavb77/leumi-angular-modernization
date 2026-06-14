@@ -5,15 +5,16 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  DOCUMENT,
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { ApolloError } from '@apollo/client/errors';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+
 import { User } from '~modules/user/shared/user.model';
 import { environment } from '~environments/environment';
 import { AppConfig } from '../../../../configs/app.config';
@@ -23,8 +24,7 @@ import { userRoutes } from '~modules/user/shared/user-routes';
   selector: 'app-change-language',
   templateUrl: './change-language.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
 })
 export class ChangeLanguageComponent implements OnInit, OnDestroy {
   @Input() user: User | undefined;
@@ -75,17 +75,17 @@ export class ChangeLanguageComponent implements OnInit, OnDestroy {
               formValue.language !== AppConfig.defaultLang ? `/${formValue.language}` : '';
             this.window.location.href = `${environment.domain}${langToRedirect}${userRoutes.myAccount}`;
           },
-          error: (error: ApolloError) => {
+          error: (error: unknown) => {
             this.handleChangePasswordError(error);
           },
         });
     }
   }
 
-  handleChangePasswordError(error: ApolloError) {
+  handleChangePasswordError(error: unknown) {
     const networkError = this.utilService.checkNetworkError(error);
     if (!networkError) {
-      const changePasswordErrors = error.graphQLErrors;
+      const changePasswordErrors = (error as CombinedGraphQLErrors).errors;
       if (changePasswordErrors.length) {
         this.alertService.create(AlertId.UPDATE_USER_ERROR);
       }

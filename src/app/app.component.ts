@@ -6,6 +6,7 @@ import {
   LOCALE_ID,
   OnDestroy,
   OnInit,
+  DOCUMENT,
 } from '@angular/core';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { ObservableInput, Subject, takeUntil, throwError as observableThrowError } from 'rxjs';
@@ -19,7 +20,7 @@ import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { User } from '~modules/user/shared/user.model';
 import { translations } from '../locale/translations';
 import { AppConfig } from './configs/app.config';
-import { DOCUMENT, NgIf } from '@angular/common';
+
 import { ActivatedRoute, Event, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { Title } from '@angular/platform-browser';
@@ -37,8 +38,7 @@ import { AlertComponent } from '~modules/shared/components/alert/alert.component
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, NgIf, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
-  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
 })
 export class AppComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();

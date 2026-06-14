@@ -57,7 +57,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "700kb",
-                  "maximumError": "800Kb"
+                  "maximumError": "900Kb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -104,13 +104,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "angularexampleapp:build:production"
+              "buildTarget": "angularexampleapp:build:production"
             },
             "development-en": {
-              "browserTarget": "angularexampleapp:build:development-en"
+              "buildTarget": "angularexampleapp:build:development-en"
             },
             "development-es": {
-              "browserTarget": "angularexampleapp:build:development-es"
+              "buildTarget": "angularexampleapp:build:development-es"
             }
           },
           "defaultConfiguration": "development-en"
@@ -200,5 +200,31 @@
   "cli": {
     "analytics": "49e1320d-9031-4d19-bb7c-2d84a0f2fd49",
     "schematicCollections": ["@angular-eslint/schematics"]
+  },
+  "schematics": {
+    "@schematics/angular:component": {
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
+    }
   }
 }

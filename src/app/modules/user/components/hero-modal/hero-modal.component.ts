@@ -7,7 +7,7 @@ import {
   OnDestroy,
   SimpleChanges,
 } from '@angular/core';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import {
   FormBuilder,
@@ -28,8 +28,7 @@ import { Modal } from 'bootstrap';
   templateUrl: './hero-modal.component.html',
   styleUrls: ['./hero-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, FormErrorsComponent, ReactiveFormsModule, NgClass, NgForOf],
+  imports: [FormErrorsComponent, ReactiveFormsModule, NgClass],
 })
 export class HeroModalComponent implements OnChanges, OnDestroy {
   @Input() modal: Modal | undefined;

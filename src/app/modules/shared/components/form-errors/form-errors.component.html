@@ -1,25 +1,33 @@
-<div *ngIf="formRef && control" class="mt-1">
-  <ng-container *ngIf="control.errors && (control.touched || formRef.submitted)">
-    <div *ngIf="control.errors['required']"><ng-container i18n>Field required</ng-container></div>
-    <div *ngIf="control.errors['email']">
-      <ng-container i18n>Format invalid. example@domain.com</ng-container>
-    </div>
-    <div *ngIf="control.errors['minlength']">
-      <ng-container i18n
-        >Minimum {{ control.errors['minlength'].requiredLength }} caracters.</ng-container
-      >
-    </div>
-    <div *ngIf="control.errors['confirmDelete']">
-      <ng-container i18n>What you typed is not</ng-container> {{ control.errors['confirmDelete'] }}
-    </div>
-    <div *ngIf="control.errors['notYourEmail']">
-      <ng-container i18n>This is not your email</ng-container>
-    </div>
-    <div *ngIf="control.errors['pattern']">
-      <ng-container i18n
-        >Password must contain at least one lowercase letter, one uppercase letter and one number.
-        No special characters allowed.
-      </ng-container>
-    </div>
-  </ng-container>
+@if (formRef && control) {
+<div class="mt-1">
+  @if (control.errors && (control.touched || formRef.submitted)) { @if (control.errors['required'])
+  {
+  <div><ng-container i18n>Field required</ng-container></div>
+  } @if (control.errors['email']) {
+  <div>
+    <ng-container i18n>Format invalid. example&#64;domain.com</ng-container>
+  </div>
+  } @if (control.errors['minlength']) {
+  <div>
+    <ng-container i18n
+      >Minimum {{ control.errors['minlength'].requiredLength }} caracters.</ng-container
+    >
+  </div>
+  } @if (control.errors['confirmDelete']) {
+  <div>
+    <ng-container i18n>What you typed is not</ng-container> {{ control.errors['confirmDelete'] }}
+  </div>
+  } @if (control.errors['notYourEmail']) {
+  <div>
+    <ng-container i18n>This is not your email</ng-container>
+  </div>
+  } @if (control.errors['pattern']) {
+  <div>
+    <ng-container i18n
+      >Password must contain at least one lowercase letter, one uppercase letter and one number. No
+      special characters allowed.
+    </ng-container>
+  </div>
+  } }
 </div>
+}
