@@ -162,15 +162,17 @@ export class AppComponent implements OnInit {
 
       if (isAccessTokenExpired) {
         if (!isRefreshTokenExpired) {
-          this.authService.refreshToken().pipe(
-            catchError((error): ObservableInput<HttpEvent<unknown>> => {
-              this.navigateToLogout();
-              return observableThrowError(error);
-            }),
-          );
+          this.authService
+            .refreshToken()
+            .pipe(
+              catchError((error): ObservableInput<HttpEvent<unknown>> => {
+                this.navigateToLogout();
+                return observableThrowError(error);
+              }),
+            )
+            .subscribe();
         } else {
           this.navigateToLogout();
-          return observableThrowError(() => new Error());
         }
       }
     }

@@ -13,7 +13,7 @@
     "e2e": "cypress run --browser chrome",
     "e2e:watch": "cypress open",
     "build": "ng build",
-    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer dist/en/stats.json",
+    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer dist/stats.json",
     "ci": "npm run lint && npm run test && npm run e2e && npm run build",
     "release:patch": "standard-version --release-as patch && git push --follow-tags origin main",
     "release:minor": "standard-version --release-as minor && git push --follow-tags origin main",
