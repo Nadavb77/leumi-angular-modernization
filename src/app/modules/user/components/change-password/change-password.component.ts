@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
-  OnDestroy,
   ViewChild,
+  inject,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormControl,
@@ -18,8 +20,6 @@ import {
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
-import { NgIf } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
 import { ApolloError } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
@@ -32,13 +32,12 @@ import { CustomError } from '~modules/auth/shared/interfaces/custom-errors.enum'
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
+  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective],
 })
-export class ChangePasswordComponent implements OnDestroy {
+export class ChangePasswordComponent {
   @ViewChild('btnReset') btnReset: ElementRef<HTMLElement> | undefined;
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   isButtonChangePasswordLoading: boolean;
   showPassword: boolean;
@@ -53,7 +52,7 @@ export class ChangePasswordComponent implements OnDestroy {
     private authService: AuthService,
     private authRepository: AuthRepository,
     private alertService: AlertService,
-    private utilService: UtilService
+    private utilService: UtilService,
   ) {
     this.isButtonChangePasswordLoading = false;
     this.showPassword = false;
@@ -69,7 +68,7 @@ export class ChangePasswordComponent implements OnDestroy {
         oldPassword: this.oldPassword,
         newPassword: this.newPassword,
       },
-      { validators: this.checkPasswords }
+      { validators: this.checkPasswords },
     );
   }
 
@@ -83,7 +82,7 @@ export class ChangePasswordComponent implements OnDestroy {
       const formValue = this.changePasswordForm.getRawValue();
       this.authService
         .changePassword(formValue.oldPassword, formValue.newPassword)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.handleChangePasswordResponse();
@@ -121,10 +120,5 @@ export class ChangePasswordComponent implements OnDestroy {
 
   updatePassword() {
     this.newPassword.updateValueAndValidity({ emitEvent: false });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

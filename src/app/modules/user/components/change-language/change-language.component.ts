@@ -1,19 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   Inject,
-  Input,
-  OnDestroy,
   OnInit,
+  inject,
+  input,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
 import { ApolloError } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { User } from '~modules/user/shared/user.model';
 import { environment } from '~environments/environment';
 import { AppConfig } from '../../../../configs/app.config';
@@ -23,13 +24,12 @@ import { userRoutes } from '~modules/user/shared/user-routes';
   selector: 'app-change-language',
   templateUrl: './change-language.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule],
 })
-export class ChangeLanguageComponent implements OnInit, OnDestroy {
-  @Input() user: User | undefined;
+export class ChangeLanguageComponent implements OnInit {
+  user = input<User | undefined>();
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   selectLanguageForm: FormGroup | undefined;
   language: FormControl | undefined;
@@ -42,33 +42,34 @@ export class ChangeLanguageComponent implements OnInit, OnDestroy {
     private alertService: AlertService,
     private authRepository: AuthRepository,
     private utilService: UtilService,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.window = this.document.defaultView as Window;
   }
 
   ngOnInit() {
-    this.language = new FormControl<string | null>(this.user?.language || AppConfig.defaultLang);
+    this.language = new FormControl<string | null>(this.user()?.language || AppConfig.defaultLang);
     this.selectLanguageForm = this.formBuilder.group({
       language: this.language,
     });
 
-    this.language.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.language.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.sendForm();
     });
   }
 
   sendForm() {
-    if (this.selectLanguageForm?.valid && this.user) {
+    const currentUser = this.user();
+    if (this.selectLanguageForm?.valid && currentUser) {
       const formValue = this.selectLanguageForm.getRawValue();
       this.authService
         .updateUser({
-          ...this.user,
+          ...currentUser,
           ...{
             language: formValue.language,
           },
         })
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             const langToRedirect =
@@ -90,10 +91,5 @@ export class ChangeLanguageComponent implements OnInit, OnDestroy {
         this.alertService.create(AlertId.UPDATE_USER_ERROR);
       }
     }
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }
