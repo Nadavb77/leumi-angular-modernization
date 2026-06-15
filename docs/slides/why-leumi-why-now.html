@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1280" />
+    <title>Why Bank Leumi, Why Now</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --cobalt: #0c4da2;
+        --azure: #00aeef;
+        --tint: #cff1ff;
+        --white: #ffffff;
+        --charcoal: #2d2d2d;
+        --charcoal-light: #4a4a4a;
+        --border: #e4e8ed;
+      }
+
+      html {
+        font-size: 16px;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #f0f2f5;
+        color: var(--charcoal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 1.5rem;
+      }
+
+      /* ── Slide ─────────────────────────────────────────────── */
+      .slide {
+        width: 1200px;
+        min-height: 675px;
+        background: var(--white);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      }
+
+      /* ── Header ────────────────────────────────────────────── */
+      .header {
+        padding: 2.75rem 3.25rem 2rem;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        color: var(--cobalt);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+
+      .header .subtitle {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--azure);
+        line-height: 1.5;
+      }
+
+      /* ── Columns ───────────────────────────────────────────── */
+      .columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 0;
+        flex: 1;
+        padding: 0 3.25rem;
+      }
+
+      .col {
+        padding: 0 1.5rem;
+        border-right: 1px solid var(--border);
+      }
+
+      .col:first-child {
+        padding-left: 0;
+      }
+
+      .col:last-child {
+        padding-right: 0;
+        border-right: none;
+      }
+
+      .col-number {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--cobalt);
+        margin-bottom: 0.35rem;
+        letter-spacing: 0.02em;
+      }
+
+      .col-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--charcoal);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.25rem;
+      }
+
+      .col-sub {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: var(--azure);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 1rem;
+      }
+
+      .col-body {
+        font-size: 0.78rem;
+        font-weight: 400;
+        color: var(--charcoal-light);
+        line-height: 1.65;
+      }
+
+      .col-body span {
+        display: block;
+        margin-bottom: 0.6rem;
+        padding-left: 0.85rem;
+        position: relative;
+      }
+
+      .col-body span::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.45em;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--azure);
+      }
+
+      /* ── Bottom Bar ────────────────────────────────────────── */
+      .bottom-bar {
+        background: var(--cobalt);
+        padding: 1.15rem 3.25rem;
+        margin-top: auto;
+      }
+
+      .bottom-bar p {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--white);
+        text-align: center;
+        line-height: 1.55;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="slide">
+      <!-- Header -->
+      <div class="header">
+        <h1>Why Bank Leumi, Why Now</h1>
+        <p class="subtitle">
+          Scale creates leverage. Market pressure creates urgency. Leadership creates permission.
+        </p>
+      </div>
+
+      <!-- Three Columns -->
+      <div class="columns">
+        <!-- Column 1 -->
+        <div class="col">
+          <div class="col-number">01</div>
+          <div class="col-title">Engineering Economics</div>
+          <div class="col-sub">Large Enough to Matter</div>
+          <div class="col-body">
+            <span>~2,000 technology professionals</span>
+            <span>~$260M annual engineering investment</span>
+            <span>~300 services spanning legacy and modern environments including Pepper</span>
+            <span
+              >A meaningful share consumed by upgrades, remediation, and end-of-life dependencies —
+              not new products or faster releases</span
+            >
+          </div>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="col">
+          <div class="col-number">02</div>
+          <div class="col-title">Forcing Functions</div>
+          <div class="col-sub">The Cost of Moving Slowly Is Rising</div>
+          <div class="col-body">
+            <span
+              >Bank of Israel mandate: two-digit to three-digit bank code migration across core
+              systems</span
+            >
+            <span
+              >Open banking: APIs exposed to third parties, raising system quality
+              requirements</span
+            >
+            <span
+              >Revolut and foreign entrants now licensed in Israel, competing on modern AI-native
+              stacks</span
+            >
+            <span
+              >New cybersecurity law: board members personally liable for security failures</span
+            >
+          </div>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="col">
+          <div class="col-number">03</div>
+          <div class="col-title">Executive AI Mandate</div>
+          <div class="col-sub">Ready to Act, Not Just Experiment</div>
+          <div class="col-body">
+            <span>#1 Israeli bank for AI adoption — Evident AI Index, June 2026</span>
+            <span>Chief AI Officer reporting to CEO</span>
+            <span>Software development automation in 2025–2027 strategic plan</span>
+            <span
+              >Board Risk Report Q1 2026: "Non-implementation of AI solutions could constitute a
+              strategic and operational risk in itself"</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="bottom-bar">
+        <p>
+          Leumi is a strong Cognition candidate because the opportunity is large enough to matter,
+          the pressure to modernize is immediate, and leadership has already created the mandate to
+          adopt AI.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
