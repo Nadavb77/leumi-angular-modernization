@@ -3,7 +3,7 @@ import { createStore, select, setProps, withProps } from '@ngneat/elf';
 import { AuthProps } from '~modules/auth/store/interfaces/auth-props.interface';
 import { localStorageStrategy, persistState } from '@ngneat/elf-persist-state';
 import { Observable } from 'rxjs';
-import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { User } from '~modules/user/shared/user.model';
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +18,7 @@ export class AuthRepository {
         user: null,
         accessToken: null,
         refreshToken: null,
-      })
+      }),
     );
 
     persistState(this.authStore, {
@@ -56,7 +56,7 @@ export class AuthRepository {
     try {
       const token = this.getAccessTokenValue();
       if (token) {
-        return !!jwt_decode(token);
+        return !!jwtDecode(token);
       }
       return false;
     } catch (Error) {

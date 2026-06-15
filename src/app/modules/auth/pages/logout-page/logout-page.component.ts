@@ -2,14 +2,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Inject,
-  OnDestroy,
+  inject,
   OnInit,
 } from '@angular/core';
 import { EventBusService, EventBusType } from '~modules/shared/services/event-bus.service';
 import { AppConfig } from '../../../../configs/app.config';
 import { AlertService } from '~modules/shared/services/alert.service';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { DOCUMENT } from '@angular/common';
 import { environment } from '~environments/environment';
@@ -20,11 +21,10 @@ import { authRoutes } from '~modules/auth/shared/auth-routes';
   selector: 'app-logout-page',
   template: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
-export class LogoutPageComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class LogoutPageComponent implements OnInit {
   window: Window;
+  private destroyRef = inject(DestroyRef);
 
   // eslint-disable-next-line max-params
   constructor(
@@ -33,7 +33,7 @@ export class LogoutPageComponent implements OnInit, OnDestroy {
     private authRepository: AuthRepository,
     private activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.window = this.document.defaultView as Window;
   }
@@ -42,31 +42,29 @@ export class LogoutPageComponent implements OnInit, OnDestroy {
     const origin = this.activatedRoute.snapshot.queryParams[AppConfig.customQueryParams.origin];
     const alertId = this.activatedRoute.snapshot.queryParams[AppConfig.customQueryParams.alertId];
 
-    this.authRepository.$user.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      let langToRedirect = '';
-      if (user && user.language !== AppConfig.defaultLang) {
-        langToRedirect = `/${user.language}`;
-      }
+    this.authRepository.$user
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+      .subscribe(user => {
+        let langToRedirect = '';
+        if (user && user.language !== AppConfig.defaultLang) {
+          langToRedirect = `/${user.language}`;
+        }
 
-      this.authRepository.clear();
+        this.authRepository.clear();
 
-      const path = new URL(`${environment.domain}${langToRedirect || ''}${authRoutes.logIn}`);
-      if (origin) {
-        path.searchParams.append(AppConfig.customQueryParams.origin, origin);
-      }
-      if (alertId) {
-        path.searchParams.append(AppConfig.customQueryParams.alertId, alertId);
-      }
+        const path = new URL(`${environment.domain}${langToRedirect || ''}${authRoutes.logIn}`);
+        if (origin) {
+          path.searchParams.append(AppConfig.customQueryParams.origin, origin);
+        }
+        if (alertId) {
+          path.searchParams.append(AppConfig.customQueryParams.alertId, alertId);
+        }
 
-      this.eventBusService.emit({
-        type: EventBusType.FINISH_LOGOUT,
-        data: { path },
+        this.eventBusService.emit({
+          type: EventBusType.FINISH_LOGOUT,
+          data: { path },
+        });
       });
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }
