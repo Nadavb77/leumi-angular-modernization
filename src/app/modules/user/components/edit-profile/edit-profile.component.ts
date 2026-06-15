@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  Input,
-  OnDestroy,
+  DestroyRef,
   OnInit,
+  inject,
+  input,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormControl,
@@ -17,8 +19,6 @@ import { User } from '~modules/user/shared/user.model';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
-import { NgIf } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
 import { ApolloError } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
@@ -28,13 +28,12 @@ import { UtilService } from '~modules/shared/services/util.service';
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective, NgIf],
+  imports: [ReactiveFormsModule, TrimDirective, FormErrorsComponent, LowercaseDirective],
 })
-export class EditProfileComponent implements OnInit, OnDestroy {
-  @Input() user: User | undefined;
+export class EditProfileComponent implements OnInit {
+  user = input<User | undefined>();
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   isButtonProfileLoading: boolean;
   profileForm: FormGroup | undefined;
@@ -47,17 +46,17 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     private changeDetectorRef: ChangeDetectorRef,
     private authService: AuthService,
     private alertService: AlertService,
-    private utilService: UtilService
+    private utilService: UtilService,
   ) {
     this.isButtonProfileLoading = false;
   }
 
   ngOnInit(): void {
-    this.firstname = new FormControl<string>(this.user?.firstname || '', [
+    this.firstname = new FormControl<string>(this.user()?.firstname || '', [
       Validators.required,
       Validators.minLength(2),
     ]);
-    this.email = new FormControl<string>({ value: this.user?.email || '', disabled: true });
+    this.email = new FormControl<string>({ value: this.user()?.email || '', disabled: true });
 
     this.profileForm = this.formBuilder.group({
       firstname: this.firstname,
@@ -66,18 +65,19 @@ export class EditProfileComponent implements OnInit, OnDestroy {
   }
 
   sendForm() {
-    if (this.profileForm?.valid && this.user) {
+    const currentUser = this.user();
+    if (this.profileForm?.valid && currentUser) {
       this.isButtonProfileLoading = true;
 
       const formValue = this.profileForm.getRawValue();
       this.authService
         .updateUser({
-          ...this.user,
+          ...currentUser,
           ...{
             firstname: formValue.firstname,
           },
         })
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.handleUpdateUserResponse();
@@ -105,10 +105,5 @@ export class EditProfileComponent implements OnInit, OnDestroy {
     }
     this.isButtonProfileLoading = networkError;
     this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

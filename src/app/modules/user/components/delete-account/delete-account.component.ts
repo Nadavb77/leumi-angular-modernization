@@ -2,12 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   Inject,
-  Input,
-  OnDestroy,
   ViewChild,
+  inject,
+  input,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder,
   FormControl,
@@ -19,8 +21,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
-import { DOCUMENT, NgIf } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
 import { ApolloError } from '@apollo/client/errors';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
@@ -37,15 +38,14 @@ import { TrimDirective } from '~modules/shared/directives/trim.directive';
   selector: 'app-delete-account',
   templateUrl: './delete-account.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [ReactiveFormsModule, FormErrorsComponent, NgIf, FormsModule, TrimDirective],
+  imports: [ReactiveFormsModule, FormErrorsComponent, FormsModule, TrimDirective],
 })
-export class DeleteAccountComponent implements OnDestroy {
-  @Input() user: User | undefined;
+export class DeleteAccountComponent {
+  user = input<User | undefined>();
 
   @ViewChild('closeModal') closeModal: ElementRef | undefined;
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   isButtonDeleteAccountLoading: boolean;
   numberOfHeroes: string;
@@ -64,7 +64,7 @@ export class DeleteAccountComponent implements OnDestroy {
     private alertService: AlertService,
     private router: Router,
     private utilService: UtilService,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.window = this.document.defaultView as Window;
     this.numberOfHeroes = '-';
@@ -83,7 +83,7 @@ export class DeleteAccountComponent implements OnDestroy {
   }
 
   userEmailValidator: ValidatorFn = (control): ValidationErrors | null =>
-    control.value !== this.user?.email ? { notYourEmail: true } : null;
+    control.value !== this.user()?.email ? { notYourEmail: true } : null;
 
   confirmValidator: ValidatorFn = (control): ValidationErrors | null => {
     const textToDeleteElement = this.window.document.getElementById('text-to-write');
@@ -99,7 +99,7 @@ export class DeleteAccountComponent implements OnDestroy {
       const formValue = this.deleteAccountForm.getRawValue();
       this.authService
         .deleteAccount(formValue.password)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: () => {
             this.handleDeleteAccountResponse();
@@ -134,10 +134,5 @@ export class DeleteAccountComponent implements OnDestroy {
     }
     this.isButtonDeleteAccountLoading = networkError;
     this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }
