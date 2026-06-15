@@ -2,13 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  DestroyRef,
   Inject,
+  inject,
   LOCALE_ID,
   OnDestroy,
   OnInit,
   Renderer2,
 } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { DOCUMENT } from '@angular/common';
 import { AppConfig } from '../../../../configs/app.config';
@@ -18,11 +20,10 @@ import { AppConfig } from '../../../../configs/app.config';
   templateUrl: './error404-page.component.html',
   styleUrls: ['./error404-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Error404PageComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
   urlToRedirect: string;
 
   // eslint-disable-next-line max-params
@@ -30,7 +31,7 @@ export class Error404PageComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private authRepository: AuthRepository,
     @Inject(DOCUMENT) private document: Document,
-    @Inject(LOCALE_ID) public locale: string
+    @Inject(LOCALE_ID) public locale: string,
   ) {
     this.urlToRedirect = this.locale !== AppConfig.defaultLang ? `/${locale}` : '/';
   }
@@ -38,7 +39,7 @@ export class Error404PageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.authRepository
       .isLoggedIn()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isLoggedIn: boolean) => {
         if (!isLoggedIn) {
           this.renderer.addClass(this.document.body, 'bg-white');
@@ -50,7 +51,5 @@ export class Error404PageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.renderer.removeClass(this.document.body, 'bg-white');
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

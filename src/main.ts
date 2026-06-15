@@ -1,4 +1,4 @@
-import { enableProdMode, importProvidersFrom, LOCALE_ID } from '@angular/core';
+import { enableProdMode, LOCALE_ID } from '@angular/core';
 import { environment } from '~environments/environment';
 import { enableElfProdMode } from '@ngneat/elf';
 import { bootstrapApplication } from '@angular/platform-browser';
@@ -8,7 +8,7 @@ import { provideRouter, Router } from '@angular/router';
 import { appPaths } from './app/app-routes';
 import { authPaths, authRoutes } from '~modules/auth/shared/auth-routes';
 import { Error404PageComponent } from '~modules/shared/pages/error404-page/error404-page.component';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { userPaths } from '~modules/user/shared/user-routes';
 import { TokenInterceptor } from '~modules/shared/interceptors/token.interceptor';
 import { AuthService } from '~modules/auth/shared/auth.service';
@@ -26,7 +26,7 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
-    importProvidersFrom(HttpClientModule),
+    provideHttpClient(withInterceptorsFromDi()),
     provideRouter([
       {
         path: appPaths.home,
@@ -55,12 +55,12 @@ bootstrapApplication(AppComponent, {
       provide: APOLLO_OPTIONS,
       useFactory: (
         httpLink: HttpLink,
-        authRepository: AuthRepository
+        authRepository: AuthRepository,
       ): ApolloClientOptions<unknown> => ({
         link: ApolloLink.from([
           setContext((operation, prevContext) => ({
             headers: {
-              ...prevContext.headers,
+              ...prevContext['headers'],
               'Accept-Language': authRepository.locale,
             },
           })),

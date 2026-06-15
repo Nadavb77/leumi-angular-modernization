@@ -2,15 +2,16 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Inject,
-  OnDestroy,
+  inject,
   OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import { EventBusService, EventBusType } from '~modules/shared/services/event-bus.service';
-import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { AlertService } from '~modules/shared/services/alert.service';
 import { AlertComponent } from '~modules/shared/components/alert/alert.component';
 import { userRoutes } from '~modules/user/shared/user-routes';
@@ -23,12 +24,11 @@ import { appRoutes } from '../../../../app-routes';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, AlertComponent, RouterModule],
+  imports: [AlertComponent, RouterModule],
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class HeaderComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   environment: typeof environment;
   currentUrl: string;
   userRoutes: typeof userRoutes;
@@ -43,7 +43,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authRepository: AuthRepository,
     public router: Router,
     private changeDetectorRef: ChangeDetectorRef,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.environment = environment;
     this.userRoutes = userRoutes;
@@ -53,14 +53,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.url;
         this.changeDetectorRef.detectChanges();
       }
     });
 
-    this.authRepository.$user.pipe(takeUntil(this.destroy$)).subscribe(user => {
+    this.authRepository.$user.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       if (user) {
         this.user = user;
       } else {
@@ -79,10 +79,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   logout() {
     this.router.navigate([authRoutes.logout]);
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

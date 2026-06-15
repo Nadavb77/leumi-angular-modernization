@@ -15,12 +15,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "i18nMissingTranslation": "warning",
             "inlineStyleLanguage": "scss",
@@ -83,16 +83,12 @@
               "localize": ["es", "en"]
             },
             "development-en": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "sourceMap": true,
               "namedChunks": true
             },
             "development-es": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "sourceMap": true,
               "namedChunks": true,
               "localize": ["es"]
@@ -104,13 +100,13 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "angularexampleapp:build:production"
+              "buildTarget": "angularexampleapp:build:production"
             },
             "development-en": {
-              "browserTarget": "angularexampleapp:build:development-en"
+              "buildTarget": "angularexampleapp:build:development-en"
             },
             "development-es": {
-              "browserTarget": "angularexampleapp:build:development-es"
+              "buildTarget": "angularexampleapp:build:development-es"
             }
           },
           "defaultConfiguration": "development-en"
@@ -118,7 +114,7 @@
         "extract-i18n": {
           "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "browserTarget": "angularexampleapp:build",
+            "buildTarget": "angularexampleapp:build",
             "format": "xlf",
             "outputPath": "src/locale",
             "targetFiles": ["messages.es.xlf"]
@@ -127,8 +123,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js", "zone.js/testing", "@angular/localize/init"],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "inlineStyleLanguage": "scss",
@@ -198,7 +193,7 @@
     }
   },
   "cli": {
-    "analytics": "49e1320d-9031-4d19-bb7c-2d84a0f2fd49",
+    "analytics": false,
     "schematicCollections": ["@angular-eslint/schematics"]
   }
 }

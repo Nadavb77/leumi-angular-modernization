@@ -2,14 +2,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Inject,
+  inject,
   Input,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EventBusService, EventBusType } from '~modules/shared/services/event-bus.service';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { User } from '~modules/user/shared/user.model';
@@ -18,24 +19,23 @@ import { User } from '~modules/user/shared/user.model';
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterModule, NgIf],
+  imports: [RouterModule],
 })
-export class SidebarComponent implements OnInit, OnDestroy {
+export class SidebarComponent implements OnInit {
   @Input() user: User | undefined;
 
   userRoutes: typeof userRoutes;
   currentUrl: string;
   showEmptySpace: boolean;
-  private destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   // eslint-disable-next-line max-params
   constructor(
     private eventBusService: EventBusService,
     public router: Router,
     private changeDetectorRef: ChangeDetectorRef,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.showEmptySpace = false;
     this.currentUrl = '';
@@ -43,14 +43,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.url;
         this.changeDetectorRef.detectChanges();
       }
     });
 
-    this.eventBusService.events$.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.eventBusService.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
       if (event.type === EventBusType.TOGGLE_SIDEBAR) {
         this.showEmptySpace = !this.showEmptySpace;
       } else if (event.type === EventBusType.CLOSE_SIDEBAR) {
@@ -66,10 +66,5 @@ export class SidebarComponent implements OnInit, OnDestroy {
     sidebar?.classList.remove('show');
     this.showEmptySpace = false;
     this.changeDetectorRef.detectChanges();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }
