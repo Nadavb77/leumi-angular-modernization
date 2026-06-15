@@ -70,12 +70,12 @@
                     [disabled]="isButtonLogInLoading"
                     class="btn btn-primary"
                     type="submit">
-                    <ng-container *ngIf="isButtonLogInLoading">
+                    @if (isButtonLogInLoading) {
                       <span
                         aria-hidden="true"
                         class="spinner-border text-white spinner-border-sm me-1"
                         role="status"></span>
-                    </ng-container>
+                    }
                     <ng-container i18n>Enter</ng-container>
                   </button>
                 </div>

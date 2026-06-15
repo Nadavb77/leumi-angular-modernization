@@ -29,7 +29,10 @@ import { AppConfig } from '../../../configs/app.config';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private apollo: Apollo, private authRepository: AuthRepository) {}
+  constructor(
+    private apollo: Apollo,
+    private authRepository: AuthRepository,
+  ) {}
 
   signup({ firstname, email, password }: RegisterPayload): Observable<AuthUserData | null> {
     return this.apollo
@@ -49,7 +52,7 @@ export class AuthService {
             return registerData;
           }
           return null;
-        })
+        }),
       );
   }
 
@@ -70,7 +73,7 @@ export class AuthService {
             return loginData;
           }
           return null;
-        })
+        }),
       );
   }
 
@@ -88,7 +91,7 @@ export class AuthService {
             return updateUserData;
           }
           return null;
-        })
+        }),
       );
   }
 
@@ -108,7 +111,7 @@ export class AuthService {
             return changePasswordData;
           }
           return null;
-        })
+        }),
       );
   }
 
@@ -127,7 +130,7 @@ export class AuthService {
             return deleteAccountData;
           }
           return null;
-        })
+        }),
       );
   }
 
@@ -149,12 +152,12 @@ export class AuthService {
           if (refreshTokenData) {
             this.authRepository.updateTokens(
               refreshTokenData.accessToken,
-              refreshTokenData.refreshToken
+              refreshTokenData.refreshToken,
             );
             return refreshTokenData;
           }
           return null;
-        })
+        }),
       );
   }
 

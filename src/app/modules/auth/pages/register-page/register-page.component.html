@@ -126,12 +126,12 @@
                     [disabled]="isButtonRegisterLoading"
                     class="btn btn-primary"
                     type="submit">
-                    <ng-container *ngIf="isButtonRegisterLoading">
+                    @if (isButtonRegisterLoading) {
                       <span
                         aria-hidden="true"
                         class="spinner-border text-white spinner-border-sm me-1"
                         role="status"></span>
-                    </ng-container>
+                    }
                     <ng-container i18n>Register</ng-container>
                   </button>
                 </div>

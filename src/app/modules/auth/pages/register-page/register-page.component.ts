@@ -3,8 +3,9 @@ import {
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  DestroyRef,
   Inject,
-  OnDestroy,
+  inject,
   Renderer2,
 } from '@angular/core';
 import {
@@ -16,7 +17,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { ApolloError } from '@apollo/client/errors';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { APP_CONFIG } from '../../../../configs/app.config';
 import { UtilService } from '~modules/shared/services/util.service';
 import { ApiError } from '~modules/shared/interfaces/api-error.interface';
@@ -29,7 +30,7 @@ import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { EventBCType, EventBusService } from '~modules/shared/services/event-bus.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LanguageSelectorComponent } from '~modules/auth/shared/components/language-selector/language-selector.component';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
@@ -41,7 +42,6 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
   templateUrl: './register-page.component.html',
   styleUrls: ['./register-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RouterLink,
     FormErrorsComponent,
@@ -49,11 +49,10 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
     LanguageSelectorComponent,
     TrimDirective,
     LowercaseDirective,
-    NgIf,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class RegisterPageComponent implements OnDestroy {
+export class RegisterPageComponent {
   authRoutes: typeof authRoutes;
   isButtonRegisterLoading: boolean;
   showPassword: boolean;
@@ -62,7 +61,7 @@ export class RegisterPageComponent implements OnDestroy {
   email: FormControl;
   password: FormControl;
   terms: FormControl;
-  private destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   // eslint-disable-next-line max-params,max-lines-per-function
   constructor(
@@ -76,7 +75,7 @@ export class RegisterPageComponent implements OnDestroy {
     private alertService: AlertService,
     private utilService: UtilService,
     @Inject(APP_CONFIG) public appConfig: IAppConfig,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.authRoutes = authRoutes;
     this.renderer.addClass(this.document.body, 'bg-linear');
@@ -122,7 +121,8 @@ export class RegisterPageComponent implements OnDestroy {
           email: formValue.email,
           password: formValue.password,
         })
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
         .subscribe({
           next: (response: unknown) => {
             this.handleRegisterResponse(response);
@@ -137,13 +137,12 @@ export class RegisterPageComponent implements OnDestroy {
   handleRegisterResponse(response: unknown) {
     const user = (response as AuthUserData).user;
     if (user) {
+      // eslint-disable-next-line promise/always-return
       return this.router.navigate([userRoutes.dashboard]).then(() => {
         this.alertService.clearAll();
         this.eventBusService.eventsBC.postMessage({
           type: EventBCType.SESSION_CHANGED,
         });
-        this.destroy$.next(true);
-        return this.destroy$.unsubscribe();
       });
     }
     return this.changeDetectorRef.detectChanges();
@@ -170,6 +169,7 @@ export class RegisterPageComponent implements OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
+  // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
   ngOnDestroy() {
     this.renderer.removeClass(this.document.body, 'bg-linear');
   }

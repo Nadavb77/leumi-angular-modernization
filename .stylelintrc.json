@@ -1,5 +1,5 @@
 {
-  "extends": ["stylelint-config-prettier"],
+  "extends": [],
   "customSyntax": "postcss-scss",
   "rules": {
     "no-empty-source": [

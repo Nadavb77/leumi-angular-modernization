@@ -3,8 +3,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Inject,
-  OnDestroy,
+  inject,
   Renderer2,
 } from '@angular/core';
 import {
@@ -16,7 +17,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '~modules/auth/shared/auth.service';
 import { ApolloError } from '@apollo/client/errors';
-import { Subject, takeUntil } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { APP_CONFIG, AppConfig } from '../../../../configs/app.config';
 import { UtilService } from '~modules/shared/services/util.service';
 import { ApiError } from '~modules/shared/interfaces/api-error.interface';
@@ -29,12 +30,11 @@ import { AuthUserData } from '~modules/auth/shared/interfaces/register-data.inte
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { EventBCType, EventBusService } from '~modules/shared/services/event-bus.service';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import { LanguageSelectorComponent } from '~modules/auth/shared/components/language-selector/language-selector.component';
 import { LowercaseDirective } from '~modules/shared/directives/lowercase.directive';
 import { TrimDirective } from '~modules/shared/directives/trim.directive';
-import { HttpClientModule } from '@angular/common/http';
 import { IAppConfig } from '../../../../configs/app-config.interface';
 
 @Component({
@@ -42,26 +42,23 @@ import { IAppConfig } from '../../../../configs/app-config.interface';
   templateUrl: './log-in-page.component.html',
   styleUrls: ['./log-in-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
-    HttpClientModule,
     RouterLink,
     FormErrorsComponent,
     ReactiveFormsModule,
     LanguageSelectorComponent,
     LowercaseDirective,
     TrimDirective,
-    NgIf,
   ],
 })
-export class LogInPageComponent implements OnDestroy, AfterViewInit {
+export class LogInPageComponent implements AfterViewInit {
   authRoutes: typeof authRoutes;
   isButtonLogInLoading: boolean;
   logInForm: FormGroup;
   email: FormControl;
   password: FormControl;
   window: Window;
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
 
   // eslint-disable-next-line max-params
   constructor(
@@ -76,7 +73,7 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
     private authRepository: AuthRepository,
     private activatedRoute: ActivatedRoute,
     @Inject(APP_CONFIG) public appConfig: IAppConfig,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.window = this.document.defaultView as Window;
     this.authRoutes = authRoutes;
@@ -103,7 +100,8 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
       const formValue = this.logInForm.getRawValue();
       this.authService
         .logIn(formValue.email, formValue.password)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        // eslint-disable-next-line rxjs-angular/prefer-takeuntil
         .subscribe({
           next: (response: unknown) => {
             this.handleLogInResponse(response);
@@ -123,13 +121,12 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
       if (origin) {
         this.window.location.href = decodeURIComponent(origin);
       } else {
+        // eslint-disable-next-line promise/always-return
         return this.router.navigate([userRoutes.dashboard]).then(() => {
           this.alertService.clearAll();
           this.eventBusService.eventsBC.postMessage({
             type: EventBCType.SESSION_CHANGED,
           });
-          this.destroy$.next(true);
-          return this.destroy$.unsubscribe();
         });
       }
     }
@@ -157,6 +154,7 @@ export class LogInPageComponent implements OnDestroy, AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
   ngOnDestroy() {
     this.renderer.removeClass(this.document.body, 'bg-linear');
   }
