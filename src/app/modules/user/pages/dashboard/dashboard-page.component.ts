@@ -3,22 +3,21 @@ import {
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  DestroyRef,
+  inject,
   Inject,
   LOCALE_ID,
-  OnDestroy,
   OnInit,
-  TrackByFunction,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { DOCUMENT, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { DOCUMENT, NgOptimizedImage } from '@angular/common';
 import { AppConfig } from '../../../../configs/app.config';
 import { userRoutes } from '~modules/user/shared/user-routes';
 import { RouterLink } from '@angular/router';
 import { HeroOrderField, HeroService, OrderDirection } from '~modules/hero/shared/hero.service';
 import { Hero } from '~modules/hero/shared/hero.model';
-import { TrackByService } from '~modules/shared/services/track-by.service';
 import { ApolloError } from '@apollo/client/errors';
 import { ApiError } from '~modules/shared/interfaces/api-error.interface';
 import { CustomError } from '~modules/auth/shared/interfaces/custom-errors.enum';
@@ -32,16 +31,14 @@ import { HeroModalComponent } from '~modules/user/components/hero-modal/hero-mod
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, RouterLink, NgForOf, NgOptimizedImage, HeroModalComponent],
+  imports: [RouterLink, NgOptimizedImage, HeroModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class DashboardPageComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class DashboardPageComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   user: User | undefined;
   window: Window;
   publicHeroes: Hero[];
-  trackHero: TrackByFunction<Hero>;
 
   // eslint-disable-next-line max-params
   constructor(
@@ -54,13 +51,12 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     @Inject(LOCALE_ID) public locale: string,
     @Inject(DOCUMENT) private document: Document
   ) {
-    this.trackHero = TrackByService.trackHero;
     this.window = this.document.defaultView as Window;
     this.publicHeroes = [];
   }
 
   ngOnInit() {
-    this.authRepository.$user.pipe(takeUntil(this.destroy$)).subscribe(user => {
+    this.authRepository.$user.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       if (user) {
         this.user = user;
         this.checkUserLanguage();
@@ -92,7 +88,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         },
         skip: 0,
       })
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(heroes => {
         if (heroes) {
           this.publicHeroes = heroes;
@@ -104,7 +100,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   voteForHero(hero: Hero) {
     this.heroService
       .voteForHero(hero.id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.loadPublicHeroes();
@@ -125,10 +121,5 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
           this.changeDetectorRef.detectChanges();
         },
       });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

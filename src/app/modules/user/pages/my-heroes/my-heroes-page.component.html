@@ -22,23 +22,24 @@
                 </tr>
               </thead>
               <tbody>
-                <ng-container *ngIf="userHeroes.length">
-                  <tr *ngFor="let hero of userHeroes; let i = index; trackBy: trackHero">
-                    <td>{{ i + 1 }}</td>
-                    <td>{{ hero.alterEgo }}</td>
-                    <td>{{ hero.realName }}</td>
-                    <td>
-                      <button (click)="deleteHero(hero)" class="dashboard__action-button p-0">
-                        <i class="icon fa-solid fa-trash"></i>
-                      </button>
-                    </td>
-                  </tr>
-                </ng-container>
-                <ng-container *ngIf="!userHeroes.length">
+                @if (userHeroes.length) {
+                  @for (hero of userHeroes; track hero.id; let i = $index) {
+                    <tr>
+                      <td>{{ i + 1 }}</td>
+                      <td>{{ hero.alterEgo }}</td>
+                      <td>{{ hero.realName }}</td>
+                      <td>
+                        <button (click)="deleteHero(hero)" class="dashboard__action-button p-0">
+                          <i class="icon fa-solid fa-trash"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                } @else {
                   <tr>
                     <td colspan="5" i18n>You don't have any heroes. Go and create one!</td>
                   </tr>
-                </ng-container>
+                }
               </tbody>
             </table>
           </div>

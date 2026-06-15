@@ -3,20 +3,19 @@ import {
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
+  DestroyRef,
+  inject,
   Inject,
   LOCALE_ID,
-  OnDestroy,
   OnInit,
-  TrackByFunction,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
-import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
-import { DOCUMENT, NgForOf, NgIf, NgOptimizedImage } from '@angular/common';
+import { DOCUMENT, NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HeroService } from '~modules/hero/shared/hero.service';
 import { Hero } from '~modules/hero/shared/hero.model';
-import { TrackByService } from '~modules/shared/services/track-by.service';
 import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { UtilService } from '~modules/shared/services/util.service';
 import { UserService } from '~modules/user/shared/user.service';
@@ -28,16 +27,14 @@ import { HeroModalComponent } from '~modules/user/components/hero-modal/hero-mod
   templateUrl: './my-heroes-page.component.html',
   styleUrls: ['./my-heroes-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, RouterLink, NgForOf, NgOptimizedImage, HeroModalComponent],
+  imports: [RouterLink, NgOptimizedImage, HeroModalComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class MyHeroesPageComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class MyHeroesPageComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
   user: User | undefined;
   window: Window;
   userHeroes: Hero[];
-  trackHero: TrackByFunction<Hero>;
   heroModal: Modal | undefined;
   heroSelected: Hero | undefined;
 
@@ -52,13 +49,12 @@ export class MyHeroesPageComponent implements OnInit, OnDestroy {
     @Inject(LOCALE_ID) public locale: string,
     @Inject(DOCUMENT) private document: Document
   ) {
-    this.trackHero = TrackByService.trackHero;
     this.window = this.document.defaultView as Window;
     this.userHeroes = [];
   }
 
   ngOnInit() {
-    this.authRepository.$user.pipe(takeUntil(this.destroy$)).subscribe(user => {
+    this.authRepository.$user.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       if (user) {
         this.user = user;
       }
@@ -72,7 +68,7 @@ export class MyHeroesPageComponent implements OnInit, OnDestroy {
   loadUserHeroes() {
     this.userService
       .getMe()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(user => {
         if (user) {
           this.userHeroes = Object.assign([], user.heroes);
@@ -101,16 +97,11 @@ export class MyHeroesPageComponent implements OnInit, OnDestroy {
   deleteHero(hero: Hero) {
     this.heroService
       .deleteHero(hero.id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.userHeroes = this.userHeroes.filter(userHero => userHero.id !== hero.id);
         this.alertService.create(AlertId.HERO_DELETED);
         this.changeDetectorRef.markForCheck();
       });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

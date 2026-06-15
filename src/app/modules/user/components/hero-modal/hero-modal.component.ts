@@ -2,12 +2,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
+  inject,
   Input,
   OnChanges,
-  OnDestroy,
   SimpleChanges,
 } from '@angular/core';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormErrorsComponent } from '~modules/shared/components/form-errors/form-errors.component';
 import {
   FormBuilder,
@@ -17,7 +18,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { translations } from '../../../../../locale/translations';
-import { Subject, takeUntil } from 'rxjs';
 import { User } from '~modules/user/shared/user.model';
 import { Hero } from '~modules/hero/shared/hero.model';
 import { HeroService } from '~modules/hero/shared/hero.service';
@@ -28,16 +28,15 @@ import { Modal } from 'bootstrap';
   templateUrl: './hero-modal.component.html',
   styleUrls: ['./hero-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [NgIf, FormErrorsComponent, ReactiveFormsModule, NgClass, NgForOf],
+  imports: [FormErrorsComponent, ReactiveFormsModule],
 })
-export class HeroModalComponent implements OnChanges, OnDestroy {
+export class HeroModalComponent implements OnChanges {
   @Input() modal: Modal | undefined;
   @Input() user: User | undefined;
   @Input() heroSelected: Hero | undefined;
   @Input() heroesList: Hero[] | undefined;
 
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  private destroyRef = inject(DestroyRef);
   translations: typeof translations;
   heroForm: FormGroup | undefined;
   isButtonLoading: boolean;
@@ -79,7 +78,7 @@ export class HeroModalComponent implements OnChanges, OnDestroy {
     if (this.heroForm?.valid) {
       this.heroService
         .createHero(this.heroForm.getRawValue())
-        .pipe(takeUntil(this.destroy$))
+        .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe(hero => {
           if (hero) {
             this.heroesList?.push(hero);
@@ -92,10 +91,5 @@ export class HeroModalComponent implements OnChanges, OnDestroy {
 
   closeModal() {
     this.modal?.hide();
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }
