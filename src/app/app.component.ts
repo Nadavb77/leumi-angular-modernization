@@ -170,7 +170,7 @@ export class AppComponent implements OnInit {
                 return observableThrowError(error);
               }),
             )
-            .subscribe();
+            .subscribe({ error: () => {} });
         } else {
           this.navigateToLogout();
         }
