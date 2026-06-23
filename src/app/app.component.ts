@@ -2,13 +2,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   Inject,
+  inject,
   LOCALE_ID,
-  OnDestroy,
   OnInit,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '~modules/auth/shared/auth.service';
-import { ObservableInput, Subject, takeUntil, throwError as observableThrowError } from 'rxjs';
+import { ObservableInput, throwError as observableThrowError } from 'rxjs';
 import { AuthRepository } from '~modules/auth/store/auth.repository';
 import EventBusEvent, {
   EventBCType,
@@ -19,7 +21,7 @@ import { AlertId, AlertService } from '~modules/shared/services/alert.service';
 import { User } from '~modules/user/shared/user.model';
 import { translations } from '../locale/translations';
 import { AppConfig } from './configs/app.config';
-import { DOCUMENT, NgIf } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Event, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { authRoutes } from '~modules/auth/shared/auth-routes';
 import { Title } from '@angular/platform-browser';
@@ -37,11 +39,10 @@ import { AlertComponent } from '~modules/shared/components/alert/alert.component
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, NgIf, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
-  standalone: true,
+  imports: [RouterOutlet, HeaderComponent, SidebarComponent, FooterComponent, AlertComponent],
 })
-export class AppComponent implements OnInit, OnDestroy {
-  destroy$: Subject<boolean> = new Subject<boolean>();
+export class AppComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
 
   user: User | undefined;
   isLoggedIn: boolean | undefined;
@@ -60,7 +61,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
     @Inject(LOCALE_ID) public locale: string,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
     this.isLoggingOut = false;
     this.isArrivalRoute = false;
@@ -77,12 +78,12 @@ export class AppComponent implements OnInit, OnDestroy {
   loadUserInfo() {
     this.authRepository
       .isLoggedIn()
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((isLoggedIn: boolean) => {
         this.isLoggedIn = isLoggedIn;
       });
 
-    this.authRepository.$user.pipe(takeUntil(this.destroy$)).subscribe(user => {
+    this.authRepository.$user.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(user => {
       if (user) {
         this.user = user;
       }
@@ -96,13 +97,13 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     };
 
-    this.eventBusService.events$.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.eventBusService.events$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
       if (event.type === EventBusType.FINISH_LOGOUT) {
         this.closeSessionAndReload(event);
       }
     });
 
-    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+    this.router.events.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
       this.handleRouteEvent(event);
     });
 
@@ -161,15 +162,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
       if (isAccessTokenExpired) {
         if (!isRefreshTokenExpired) {
-          this.authService.refreshToken().pipe(
-            catchError((error): ObservableInput<HttpEvent<unknown>> => {
-              this.navigateToLogout();
-              return observableThrowError(error);
-            })
-          );
+          this.authService
+            .refreshToken()
+            .pipe(
+              catchError((error): ObservableInput<HttpEvent<unknown>> => {
+                this.navigateToLogout();
+                return observableThrowError(error);
+              }),
+            )
+            .subscribe({ error: () => {} });
         } else {
           this.navigateToLogout();
-          return observableThrowError(() => new Error());
         }
       }
     }
@@ -188,10 +191,5 @@ export class AppComponent implements OnInit, OnDestroy {
 
   setMetaTags() {
     this.titleService.setTitle(translations.title);
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next(true);
-    this.destroy$.unsubscribe();
   }
 }

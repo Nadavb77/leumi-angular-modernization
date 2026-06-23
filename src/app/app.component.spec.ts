@@ -1,4 +1,4 @@
-import { RouterTestingModule } from '@angular/router/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from '~modules/shared/components/header/header.component';
 import { MockComponent } from 'ng-mocks';
@@ -15,12 +15,12 @@ describe('AppComponent', () => {
   const createComponent = createComponentFactory({
     component: AppComponent,
     imports: [
-      RouterTestingModule,
       MockComponent(HeaderComponent),
       MockComponent(FooterComponent),
       MockComponent(AlertComponent),
     ],
     providers: [
+      provideRouter([]),
       { provide: AuthService, useValue: authServiceSpy },
       { provide: APP_CONFIG, useValue: AppConfig },
     ],

@@ -1,3 +1,4 @@
+/// <reference types="@angular/localize" />
 import { Modal } from 'bootstrap';
 
 declare global {

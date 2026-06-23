@@ -1,5 +1,5 @@
-<ng-container *ngIf="!isLoggingOut">
-  <ng-container *ngIf="isLoggedIn && !isArrivalRoute">
+@if (!isLoggingOut) {
+  @if (isLoggedIn && !isArrivalRoute) {
     <div class="app__content-container">
       <app-header></app-header>
       <div class="container mw-100">
@@ -15,9 +15,9 @@
     <div class="container mw-100">
       <app-footer></app-footer>
     </div>
-  </ng-container>
-  <ng-container *ngIf="!isLoggedIn">
+  }
+  @if (!isLoggedIn) {
     <app-alert></app-alert>
     <router-outlet></router-outlet>
-  </ng-container>
-</ng-container>
+  }
+}
